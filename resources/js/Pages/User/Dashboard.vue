@@ -1,5 +1,6 @@
 <script setup>
-import { router, useForm } from '@inertiajs/vue3'
+import { router, useForm, Link } from '@inertiajs/vue3'
+import { computed } from 'vue'
 import AppLayout from '@/Pages/Layouts/AppLayout.vue'
 
 defineOptions({
@@ -28,7 +29,7 @@ const submitPost = () => {
 </script>
 <template>
     <div class="flex flex-col items-center mt-12 mb-12">
-        <div class="shadow-lg rounded-lg p-4 w-3/4">
+        <div class="shadow-lg rounded-lg p-4 w-3/4 bg-white">
             <form @submit.prevent="submitPost">
                 <label>Title:</label>
                 <input type="text" v-model="toPost.title" class="flex border rounded-lg w-full my-2" />
@@ -41,14 +42,14 @@ const submitPost = () => {
         </div>
         <p class="text-2xl mt-8 w-3/4 bg-blue-900 p-4 text-white rounded-lg">Posts</p>
         
-        <div v-for="post in posts" class="flex justify-between items-center shadow-lg rounded-lg p-4 w-3/4 mt-6" :key="post.id">
+        <div v-for="post in posts" class="flex justify-between items-center shadow-lg rounded-lg p-4 w-3/4 mt-6 bg-white" :key="post.id">
             <div>
                 <h1 class="text-sm"><i>{{ post.username }}</i></h1>
                 <h1 class="text-lg font-bold">{{ post.title }}</h1>
                 <h1 class="text-sm"><i>{{ post.created_at }}</i></h1>
             </div>
             <div>
-                <button class="p-2 bg-green-900 text-white rounded-lg">Checkout</button>
+                <Link :href="`/viewPost/${post.id}`" class="p-2 bg-green-900 text-white rounded-lg">Checkout</Link>
             </div>
         </div>
     </div>

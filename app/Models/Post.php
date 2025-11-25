@@ -13,8 +13,8 @@ class Post extends Model
     }
 
     public static function getMostRecent() {
-        $posts = Post::query()
-                    ->leftjoin('post_users', 'post_users.id', '=', 'posts.author')
+        $posts = Post::select('posts.*', 'post_users.username')
+                    ->leftJoin('post_users', 'posts.author', '=', 'post_users.id')
                     ->orderBy('posts.created_at', 'desc')
                     ->get();
 
@@ -22,7 +22,7 @@ class Post extends Model
     }
 
     public static function getUserPosts($id) {
-        $posts = Post::query()
+        $posts = Post::select('posts.*', 'post_users.username')
                     ->where('author', $id)
                     ->leftjoin('post_users', 'post_users.id', '=', 'posts.author')
                     ->orderBy('posts.created_at', 'desc')
@@ -32,7 +32,7 @@ class Post extends Model
     }
 
     public static function getPost($id) {
-        $post = Post::query()
+        $post = Post::select('posts.*', 'post_users.username')
                     ->where('posts.id', $id)
                     ->leftjoin('post_users', 'post_users.id', '=', 'posts.author')
                     ->get();

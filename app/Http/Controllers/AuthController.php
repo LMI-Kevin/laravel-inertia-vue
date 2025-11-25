@@ -43,8 +43,12 @@ class AuthController extends Controller
 
         $userCredentials = PostUser::login($request->only('username', 'password'));
         
-        session()->put('user', $userCredentials['user']);
-
-        return redirect()->route('dashboard');
+        if($userCredentials['success']) {
+            session()->put('user', $userCredentials['user']);
+            
+            return redirect()->route('dashboard');
+        } else {
+            return redirect()->back()->with('success', 'Incorrect credentials');
+        }
     }
 }

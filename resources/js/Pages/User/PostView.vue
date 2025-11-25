@@ -1,7 +1,7 @@
 <script setup>
 import AppLayout from '@/Pages/Layouts/AppLayout.vue'
-import { useForm, Link } from '@inertiajs/vue3'
-import { reactive, ref } from 'vue'
+import { router, useForm, Link } from '@inertiajs/vue3'
+import { reactive, ref, computed } from 'vue'
 
 const alert = ref();
 
@@ -10,6 +10,7 @@ defineOptions({
 })
 
 const props = defineProps({
+    comments: Array,
     post: Array,
     user: Object
 })
@@ -19,6 +20,12 @@ const postForm = useForm({
     title: props.post[0].title,
     content: props.post[0].content,
 })
+
+const commentForm = useForm({
+    comment: ''
+})
+
+const comments = computed(() => props.comments )
 
 const editPost = () => {
     postForm.put(`/editPost/${postDetails.id}`, {
@@ -32,6 +39,21 @@ const deletePost = () => {
     if(confirm('Delete Post?')) {
         postForm.delete(`/deletePost/${postDetails.id}`)
     }
+}
+
+const postComment = () => {
+    commentForm.post(`/postComment/${postDetails.id}`, {
+        onSuccess: () => {
+            commentForm.comment = ""
+            router.reload()
+        }
+    })
+}
+
+const deleteComment = (commentId) => {
+    console.log(postDetails.id)
+    // router.delete(`/deleteComment/${commentId}/${postDetails.id}`)
+    // router.reload()
 }
 
 </script>
@@ -61,10 +83,29 @@ const deletePost = () => {
                 <div class="flex mt-2 gap-1">
                     <button class="bg-blue-900 rounded-lg p-2 w-full text-white">Edit</button>
                     <form @submit.prevent="deletePost">
-                        <button type="submit" class="bg-green-900 rounded-lg p-2 w-full text-center text-white">Delete</button>
+                        <button type="submit" class="bg-red-900 rounded-lg p-2 w-full text-center text-white">Delete</button>
                     </form>
                 </div>
             </form>
+        </div>
+        <div class="w-3/4 shadow-lg p-6 rounded-lg">
+            <form @submit.prevent="postComment">
+                <div class="flex gap-3 justify-center items-end">
+                    <textarea v-model="commentForm.comment" class="border p-2 w-full rounded-lg mt-2"></textarea>
+                    <button type="submit" class="bg-green-900 rounded-lg text-white text-xs p-1">Post Comment</button>
+                </div>
+            </form>
+            <p class="my-2"><i>Comments:</i></p>
+            <div v-for="comment in comments" class="flex justify-between items-center border rounded-lg my-2 p-3">
+                <div>
+                    <p><b>{{ comment.username }}</b> - {{ comment.comment }}</p>
+                </div>
+                <div v-if="comment.commenter == postDetails.author">
+                    <form @submit.prevent="deleteComment(comment.id)">
+                        <button class="p-2 m-2 text-xs rounded-lg bg-red-900 text-white">Delete Comment</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </template>

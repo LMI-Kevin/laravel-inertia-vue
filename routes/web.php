@@ -21,4 +21,7 @@ Route::middleware('checkUser')->group(function() {
     Route::get('/viewPost/{postId}', [PostController::class, 'viewPost'])->name('viewPost');
     Route::put('/editPost/{postId}', [PostController::class, 'editPost'])->name('editPost');
     Route::delete('/deletePost/{postId}', [PostController::class, 'deletePost'])->name('deletePost');
+
+    Route::post('/postComment/{postId}', [PostController::class, 'postComment'])->name('postComment');
+    Route::delete('/deleteComment/{commentId}/{postId}', [PostController::class, 'deleteComment'])->name('deleteComment');
 });

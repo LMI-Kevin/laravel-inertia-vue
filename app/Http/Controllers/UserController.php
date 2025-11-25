@@ -11,6 +11,8 @@ class UserController extends Controller
     public function index() {
         $posts = Post::getMostRecent();
 
+        // dd($posts);
+
         return Inertia::render('User/Dashboard', [
             'posts' => $posts
         ]);
