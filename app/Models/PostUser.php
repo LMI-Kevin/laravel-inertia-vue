@@ -40,4 +40,8 @@ class PostUser extends Authenticatable
             ];
         }
     }
+
+    public static function editProfile($userId, $data) {
+        return PostUser::findOrFail($userId)->update($data);
+    }
 }

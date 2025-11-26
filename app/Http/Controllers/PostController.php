@@ -13,13 +13,21 @@ class PostController extends Controller
         $request->validate([
             'title' => 'required',
             'content' => 'required',
+            'image' => 'nullable|image'
         ]);
 
-        $request->merge([
-            'author' => session('user.id')
-        ]);
+        $data = $request->all();
 
-        Post::createPost($request->all());
+        // dd($request->all());
+        if($request->hasFile('image')) {
+            $filename = time() . '_' . $request->image->getClientOriginalName();
+            $request->image->storeAs('public/posts', $filename);
+            $data['image'] = $filename;
+        }
+
+        $data['author'] = session('user.id');
+
+        Post::createPost($data);
         return redirect()->route('dashboard');
     }
 
@@ -41,10 +49,19 @@ class PostController extends Controller
     public function editPost(Request $request, $postId) {
         $request->validate([
             'title' => 'required',
-            'content' => 'required'
+            'content' => 'required',
+            'image' => 'nullable'
         ]);
+
+        $data = $request->all();
+
+        if($request->hasFile('image')) {
+            $filename = time() . '_' . $request->image->getClientOriginalName();
+            $request->image->storeAs('public/posts', $filename);
+            $data['image'] = $filename;
+        }
         
-        Post::editPost($postId, $request->all());
+        Post::editPost($postId, $data);
         return redirect("/viewPost/$postId");
     }
 

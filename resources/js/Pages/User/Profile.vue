@@ -19,11 +19,19 @@ const userDetails = useForm({
     password: ''
 })
 
+const editProfile = () => {
+    userDetails.put(`/editProfile/${props.user.id}`, {
+        onSuccess: () => {
+            router.reload()
+        }
+    })
+}
+
 </script>
 <template>
     <div class="flex flex-col items-center mt-12 mb-12">
         <div class="shadow-lg w-3/4 p-6 rounded-lg">
-            <form>
+            <form @submit.prevent="editProfile">
                 <label>Username:</label>
                 <input
                     type="text"

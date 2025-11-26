@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    protected $fillable = ['title', 'content', 'likes', 'author'];
+    protected $fillable = ['title', 'content', 'likes', 'image', 'author'];
 
     public static function createPost($data) {
         Post::create($data);
@@ -35,7 +35,7 @@ class Post extends Model
         $post = Post::select('posts.*', 'post_users.username')
                     ->where('posts.id', $id)
                     ->leftjoin('post_users', 'post_users.id', '=', 'posts.author')
-                    ->get();
+                    ->first();
 
         return $post;
     }

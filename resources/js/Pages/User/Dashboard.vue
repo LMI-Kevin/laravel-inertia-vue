@@ -1,7 +1,10 @@
 <script setup>
 import { router, useForm, Link } from '@inertiajs/vue3'
-import { computed } from 'vue'
+import { ref } from 'vue'
 import AppLayout from '@/Pages/Layouts/AppLayout.vue'
+
+const image = ref(null)
+const imagePreview = ref(null)
 
 defineOptions({
     layout: AppLayout
@@ -13,17 +16,32 @@ defineProps({
 
 const toPost = useForm({
     title: '',
-    content: ''
+    content: '',
+    image: null
 })
 
 const submitPost = () => {
+    if(image.value?.files[0]) {
+        toPost.image = image.value.files[0]
+    }
+
+    // console.log(toPost)
     toPost.post('/submitPost', {
+        forceFormData: true,
         onSuccess: () => {
+            toPost.reset('title', 'content', 'image')
+            image.value.value = ''
             router.reload()
-            toPost.title = ""
-            toPost.content = ""
         }
     })
+}
+
+const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if(!file) return
+
+    toPost.image = file
+    imagePreview.value = URL.createObjectURL(file)
 }
 
 </script>
@@ -32,11 +50,13 @@ const submitPost = () => {
         <div class="shadow-lg rounded-lg p-4 w-3/4 bg-white">
             <form @submit.prevent="submitPost">
                 <label>Title:</label>
-                <input type="text" v-model="toPost.title" class="flex border rounded-lg w-full my-2" />
+                <input type="text" v-model="toPost.title" class="flex border rounded-lg w-full p-2 my-2" />
 
                 <label>Content:</label>
-                <textarea v-model="toPost.content" class="flex border rounded-lg w-full my-2"></textarea>
+                <textarea v-model="toPost.content" class="flex border rounded-lg w-full p-2 my-2"></textarea>
                 
+                <img :src="imagePreview" class="w-full my-2 rounded-lg" />
+                <input type="file" class="flex border rounded-lg w-full p-2" ref="image" @change="handleImageChange" accept="image/*" />
                 <button type="submit" class="flex bg-blue-900 rounded-lg w-full justify-center text-white mt-5 p-1">Post</button>
             </form>
         </div>
